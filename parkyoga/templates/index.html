@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+<style>
+    .dropdown-caret {
+    margin-left: auto;
+    border-top: 8px solid;
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
+    }     
+    .container-no-border {
+        border-left: none;
+        border-right: none;
+    }
+ </style>
+
+{% block head %}
+<!-- add a big banner to welcome user -->
+<div class="jumbotron jumbotron-fluid card card-image" style="background-image: url({{url_for('static', filename='img/header.jpg') }})">
+    <div class="text-white text-center py-5 px-4" style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+        <div>
+            <p class="display-5" style="text-align: left ;">Welcome to Park Yoga Courses, your go-to destination for yoga sessions held in the serene parks of Brisbane. Are you looking for a way to practice yoga amidst nature, feeling the grass beneath your feet and the sun on your skin? Look no further—we've got you covered with a variety of yoga courses designed to connect you with nature and promote wellness. Join us to find your inner peace and enhance your well-being in the beautiful outdoors of Brisbane.</p>
+            <h1 class="display-1" style="font-weight: bolder;">Brisbane Park Yoga Course </h1>
+            <p class="display-3">Find your inner peace!</p>           
+        </div>
+        <!-- create dropdown menu -->
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle btn-block d-flex justify-content-between align-items-center text-left" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 5%; width: 80%; background-color: rgba(180, 215, 180, 0.7); height: 80px;">
+                        <span>Select Suburb to see available park yoga</span>
+                        <span class="dropdown-caret"></span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="width: 80%;">
+                        {% for suburb in suburbs %}
+                        <a class="dropdown-item" href="{{ url_for('main.yogacourse', suburb_id=suburb.id) }}">{{suburb.name}}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block main %}
+<!-- display the search result with if conditoon -->
+{% if query %}
+<section>
+    <div class="text-dark text-center" style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+        <div>
+            <p class="h3 text-dark mb-4">Search Results for "{{ query }}"</p>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center flex-wrap" style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+        {% set card_count = courses|length %}
+        {% if card_count %}
+            {% for course in courses %}
+            <div class="card mb-4 {{ 'col-md-6' if card_count == 1 else 'col-md-4' }}">
+                <img class="card-img-top" src="{{ url_for('static', filename='img/' + course.image) }}" alt="Card image">
+                <div class="card-body">
+                    <h4 class="card-title" style="font-weight: bold;">{{ course.name }}</h4>
+                    <!-- make the description short -->
+                    <p class="card-text">{{ course.description[:100] }}{% if course.description|length > 100 %}...{% endif %}</p>
+                    <!-- create the google map location link -->
+                    <p class="card-text"><a href="{{course.location }}"> View Location </a></p>
+                    <p class="card-text" style="font-weight: bolder;">Price: ${{course.price}}/person</p>
+                    <a href="{{ url_for('main.yogacourse', suburb_id=course.suburb_id) }}" class="btn btn-info" role="button">View Course</a>
+                </div>     
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No courses found matching your query.</p>
+        {% endif %}
+    </div>
+</section>
+{% else %}
+
+<!-- if there is no search display all the suburbs -->
+<section>
+    <div class="text-dark text-center" style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+        <div>
+            <p class="h3 text-dark mb-4" id="suburbs_anchor" style="font-weight: bolder; ">See available park yoga courses in your suburb!</p>
+        </div>
+    </div>
+    <div class="container">
+        {% for suburb in suburbs %}
+        <div class="card mb-3" style="max-width: 100%; border: none;">
+            <div class="row no-gutters">
+                <!-- just wanna show the suburb card with left and right horizontal style -->
+                {% if loop.index is even %}
+                <div class="col-md-6 order-md-2">
+                {% else %}
+                <div class="col-md-6">
+                {% endif %}
+                    <img src="{{ url_for('static', filename='img/' + suburb.image) }}" class="card-img" alt="Suburb Image">
+                </div>
+                {% if loop.index is even %}
+                <div class="col-md-6">
+                {% else %}
+                <div class="col-md-6 order-md-2">
+                {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-weight: bolder;">{{ suburb.name }}</h5>
+                        <p class="card-text">{{ suburb.description }}</p>
+                        <div class="d-flex justify-content-end"> 
+                            <a href="{{ url_for('main.yogacourse', suburb_id=suburb.id) }}" class="btn btn-info" role="button">Check Park Yoga</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>    
+    
+</section>
+{% endif %}
+<!-- showing the bebnefit of doing yoga -->
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card text-center full-width-card" style="background-image: url('{{url_for('static', filename='img/yogalogo.png')}}'); background-size: cover;">
+                    <div class="card-header" style="font-size: larger; font-weight: bolder;">
+                        Your Mind & Soul is Beautiful
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Emotional Balance</h5>
+                        <p class="card-text">Yoga and meditation therapy foster emotional well-being by reducing stress, anxiety, and depression through mindful practices.</p>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Mental Clarity</h5>
+                        <p class="card-text">Yoga and meditation cultivate mental clarity, focus, and improved cognitive function, promoting a calm and centered mind.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>  
+</section>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<!-- display contents of user basket -->
+<section>  
+    <div class="container">
+        <div class="row co-12 d-flex mt-2 mb-2">
+            <h3>Shopping Basket</h3>
+        </div>
+
+        <!-- each tour on seperate row -->
+        {% for course in order.courses %}
+            <div class="row shadow-md my-row mb-3">
+                <div class="col-sm-10 card">
+                    <h5 class="card-header">{{course.date}}
+                        <!-- create a link to course user chose, to display the course in basket -->
+                        <a href="{{ url_for('main.yogacourse', suburb_id=course.suburb_id, course_id=course.id) }}">
+                            {{ course.name }}
+                        </a>
+                    </h5>                                   
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-2">
+                                <img class="img-thumbnail" src="{{url_for('static', filename=('img/' + course.image))}}">
+                            </div>
+                            <div class="col-10">
+                                <!-- Item Description -->
+                                <p class="card-text">{{course.description}}</p>
+                            </div>  
+                        </div>                      
+                    </div>
+                </div>
+                <br><br>
+                <!-- right column has price and delete button -->
+                <div class="col-sm-2">
+                <!-- delete item button -->
+                    <h5 class="mt-2">{{"$%.2f"|format(course.price)}}</h5>
+                    <!-- create google map link to the course location in basket -->
+                    <p class="card-text"><a href="{{ course.location }}"> View Location </a></p>
+                    <form method="POST" action="{{url_for('main.deleteorderitem')}}">
+                        <input type="hidden" id="id" name="id" value="{{course.id}}">
+                        <input type="submit" value="Delete" class="btn btn-info mb-3">
+                    </form> 
+                </div>
+            </div>
+        {% endfor %}
+        
+        <!-- total price and page controls -->
+        <section>
+            <div class="row co-12 d-flex">
+                <h5 class="mt-4">Total Price = {{"$%.2f"|format(total_price)}}</h5>
+            </div>
+            <div class="row co-12 d-flex mt-2 mb-4">
+                <a href="{{url_for('main.index', _anchor='suburbs_anchor')}}" class="btn btn-info mr-2">Suburbs</a>
+                <a href="{{url_for('main.checkout')}}" class="btn btn-info mr-2">Checkout</a>
+                <a href="{{url_for('main.deleteorder')}}" class="btn btn-info">Empty Basket</a>
+            </div>
+        </section>
+    </div>
+</section>
+
+{% endblock %}

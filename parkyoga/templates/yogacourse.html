@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<!-- display yoga cousrses for the specific suburb -->
+<section style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+    <div class="text-dark text-center">
+        <div>
+            <!-- make the suburb name showed at the head when display the yoga courses, so user knows where they are -->
+            <p class="h3 text-dark mb-4" style="font-weight: bolder; margin-top: 2%;"> {{suburb_name}} : Select a Park Yoga course from below</p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            {% for course in courses %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img class="card-img-top" src="{{url_for('static', filename='img/' + course.image)}}" alt="Card image">
+                    <div class="card-body">
+                        <h4 class="card-title" style="font-weight: bold;">{{course.name}}</h4>
+                        <p class="card-text">{{course.description}}</p>
+                        <!-- create the google link to show the course location -->
+                        <p class="card-text"><a href="{{ course.location }}">View Location</a></p>
+                        <p class="card-text" style="font-weight: bolder;">Price: ${{course.price}}/person</p>
+                    </div>
+                    <div class="card-footer">
+                        <form action="{{url_for('main.order')}}" method="POST">
+                            <div class="form-group">
+                                <label for="course_date">Choose a date:</label>
+                                <select class="form-control" id="course_date" name="course_date">
+                                    <!-- make multiple dates available for each course, define in the yogacourse about the new_dates -->
+                                    {% for date in course.new_dates %}
+                                    <option value="{{ date }}">{{ date.strftime('%d/%m/%Y') }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <!-- define the course_id in def yogacourse to send the request of which course selected -->
+                            <input type="hidden" id="course" name="courses_id" value="{{course.id}}">
+                            <input class="btn btn-info btn-block" type="submit" value="Add to Basket">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div> 
+</section>
+{% endblock %}

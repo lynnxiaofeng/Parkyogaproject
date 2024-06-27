@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% from 'bootstrap4/form.html' import render_form %}
+
+{% block main %}
+    <section>  
+        <div class="container">
+            <div class="row">
+                <div class = "col-12">
+                    <h1>Checkout</h1>
+                    <p>
+                        Enter your information to confirm. 
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class = "col-6">
+                    {{render_form(form)}}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
